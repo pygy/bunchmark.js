@@ -1,11 +1,11 @@
 {
   "name": "bunchmark",
-  "version": "0.0.0",
+  "version": "0.0.2-experiment-2",
   "description": "benchmarking lib",
   "type": "module",
   "main": "bunchmark.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "bash run test"
   },
   "repository": {
     "type": "git",
@@ -20,7 +20,11 @@
     "url": "https://github.com/pygy/bunchmark.js/issues"
   },
   "homepage": "https://github.com/pygy/bunchmark.js#readme",
+  "dependencies": {
+    "vella": "0.0.7-pre-11"
+  },
   "devDependencies": {
-    "eslint": "^7.13.0"
+    "eslint": "^7.13.0",
+    "ospec": "^4.1.1"
   }
 }
