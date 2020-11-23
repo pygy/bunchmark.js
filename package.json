@@ -1,6 +1,6 @@
 {
   "name": "bunchmark",
-  "version": "0.0.2-experiment-2",
+  "version": "0.0.2",
   "description": "benchmarking lib",
   "type": "module",
   "main": "bunchmark.js",
@@ -25,6 +25,7 @@
   },
   "devDependencies": {
     "eslint": "^7.13.0",
-    "ospec": "^4.1.1"
+    "ospec": "^4.1.1",
+    "wright": "^2.0.4"
   }
 }

@@ -1,0 +1,22 @@
+#!/bin/bash
+
+# See: https://james-forbes.com/#!/posts/alternative-to-npm-scripts
+export PATH=./node_modules/.bin:$PATH
+
+function cover() {
+    compile && c8 -r lcov ./node_modules/.bin/ospec
+}
+
+function lint() {
+    eslint $@ --cache .
+}
+
+function test() {
+    ospec
+}
+
+function wright(){
+	./node_modules/.bin/wright index.html
+}
+
+eval "$@"
