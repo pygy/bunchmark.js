@@ -7,7 +7,6 @@ function stringify(x) {
 		if (typeof x !== "function") throw new TypeError(`string or function expected for ${name}, got ${typeof x}`)
 		const source = x.toString()
 		return source.slice(source.indexOf("{") + 1, source.lastIndexOf("}"))
-		
 	}
 }
 
@@ -18,7 +17,7 @@ const now_id = `now_${uid}`
 const hasPerf = typeof performance !== "undefined"
 const header = `
 const ${result_uid} = {};
-const ${now_id} = ${hasPerf ? "performance.now" : "process.hrtime.bigint"}
+const ${now_id} = ${hasPerf ? "() => performance.now()" : "process.hrtime.bigint"}
 `
 const plainFooter = (result_uid) => `
 return ${result_uid};
@@ -52,12 +51,14 @@ ${footer(result_uid)}
 }
 
 function compilePlain({tasks, prologue = "", beforeEach = "", afterEach = ""}) {
-	const samplers = new Function(bake({tasks, prologue, beforeEach, afterEach, footer: plainFooter}))()
+	const source = bake({tasks, prologue, beforeEach, afterEach, footer: plainFooter})
+	const samplers = new Function(source)()
 
 	return tasks.map(t=>({
 		...t,
 		results: [],
 		N: null,
+		calibrationResults: [],
 		sample: samplers[t.name]
 	}))
 }
@@ -83,15 +84,16 @@ const iframeFooter = result_uid => `
 window.addEventListener("message", ({origin, data: {name, N}}) => {
 	if (origin === ${JSON.stringify(window.location.origin)}) {
 		${result_uid}[name](N).then(time => {
-			window.parent.postMessage({name, time, ${result_uid}: 1}}, ${JSON.stringify(window.location.origin)})
+			window.parent.postMessage({name, time, ${result_uid}: 1}, ${JSON.stringify(window.location.origin)})
 		}).catch(({stack, message}) => {
-			window.parent.postMessage({name, stack, message, ${result_uid}: 1}}, ${JSON.stringify(window.location.origin)})
+			window.parent.postMessage({name, stack, message, ${result_uid}: 1}, ${JSON.stringify(window.location.origin)})
 		})
 	}
 })
 `
 
 function compileIframe({tasks, prologue = "", beforeEach = "", afterEach = "", html = ""}) {
+	if (ifr.parent == null) document.body.appendChild(ifr)
 	ifr.srcdoc = `
 <!doctype html>
 <meta charset="utf8"><title>Bunchmark sandbox</title>
@@ -106,6 +108,7 @@ ${sanitizeScript(bake({tasks, prologue, beforeEach, afterEach, footer: iframeFoo
 				...t,
 				results: [],
 				N: null,
+				calibrationResults: [],
 				sample: N => {
 					return new Promise((fulfill_, reject_) => {
 						window.addEventListener("message", function handler({data}) {
@@ -118,7 +121,7 @@ ${sanitizeScript(bake({tasks, prologue, beforeEach, afterEach, footer: iframeFoo
 								}
 							}
 						})
-						ifr.contentWindow.postMessage({name: t.name, N}, window.location.origin)
+						ifr.contentWindow.postMessage({name: t.name, N}, "*")
 					})
 				}
 			})))

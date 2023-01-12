@@ -1,15 +1,21 @@
 import {shuffled} from "./shuffle.js"
+import {median} from "./stats"
 import {compilePlain, compileIframe} from "./compile.js"
+
 export {compilePlain, compileIframe}
-export {stats} from "./stats.js"
 const delay = n => new Promise(f => setTimeout(f, n))
 // N is the baseline repetition count for a run
-async function findN(sample) {
+
+async function findN(task, calibrationTargetDuration) {
+	const {sample, results, calibrationResults} = task
+  if (typeof sample !== 'function') debugger
 	let N = 1
 	for (;;) {
 		const t = await sample(N)
-		if (t > 24) {
-			N = (N * 24 / t) | 0
+		if (t > calibrationTargetDuration) {
+			results.push(t / N)
+			task.N = (N * calibrationTargetDuration / t)
+			calibrationResults.push(task.N)
 			break
 		} else {
 			N *= 2
@@ -30,69 +36,32 @@ async function runOne({sample, N, results}) {
 	results.push(await sample(reps) / reps)
 }
 
-export async function calibrate({tasks, onCalibrationTick}) {
-	const reps = 16
-	tasks.forEach(t=>t.N = 0)
-	for (let i = 0; i < reps; i++) {
-		onCalibrationTick(i)
-		const sh = shuffled(tasks)
-		for (const i in sh) {
-			const t = sh[i]
-			t.N = Math.max(t.N, await findN(t.sample))
-		}
-		await delay(0)
-	}
-}
 
-export async function run({tasks, reps, onRunTick}) {
+export async function run({tasks, reps, onTick}) {
+	const calibrationRuns = 15
+	const calibrationTargetDuration = 24 // in ms, was deemed good engonh one day, should revisit
 	let i = 0
 	while (i++ < reps()) {
-		onRunTick(i)
 		const sh = shuffled(tasks)
-		for (const i in sh) {
-			await runOne(sh[i])
+		if (i < calibrationRuns) {
+			for(const task of tasks) {
+				findN(task, calibrationTargetDuration)
+			}
+		} else {
+			if (i === calibrationRuns) {
+        // set the final iteration number for each task
+        // we take the median of the calibration runs.
+				for(const task of tasks) {
+					task.N = median(task.calibrationResults)
+				}
+			}
+      
+			for (const j in sh) {
+				await runOne(sh[j])
+			}
 		}
-		
+		onTick({i: i - 1, reps, tasks})
 		await delay(0)
 	}
 	return tasks.map(({name, N, results}) => ({name, N, results}))
-}
-
-
-export async function bunchmark({
-	tasks,
-	reps = 100,
-	prologue = "",
-	beforeEach = "",
-	afterEach = "",
-	displayEvery = 10,
-	onDisplayUpdate = () => {},
-	beforeCalibration = () => {},
-	onCalibrationTick = () => {},
-	onCalibrationDone = () => {},
-	beforeRunning = () => {},
-	onRunTick = () => {},
-}) {
-	tasks = await compilePlain({
-		tasks: Object.entries(tasks).map(([name, v]) => ({
-			...v,
-			name
-		})),
-		prologue,
-		beforeEach,
-		afterEach
-	})
-	beforeCalibration({reps})
-	return calibrate({tasks, onCalibrationTick}).then(() => {
-		onCalibrationDone()
-		beforeRunning({reps, displayEvery})
-		return run({tasks, reps(){return reps}, onRunTick(i) {
-			onRunTick(i)
-			if (i % displayEvery === 0) onDisplayUpdate({
-				reps,
-				i, 
-				tasks: tasks.map(({name, N, results}) => ({name, N, results}))
-			})
-		}})
-	})
 }
