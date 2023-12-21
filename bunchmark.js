@@ -1,5 +1,5 @@
 import {shuffled} from "./shuffle.js"
-import {median} from "./stats"
+import {median} from "./stats.js"
 import {compilePlain, compileIframe} from "./compile.js"
 
 export {compilePlain, compileIframe}

@@ -1,6 +1,6 @@
 {
   "name": "bunchmark",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "benchmarking lib",
   "type": "module",
   "main": "bunchmark.js",
