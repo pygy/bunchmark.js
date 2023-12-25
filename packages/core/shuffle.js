@@ -26,7 +26,7 @@ export const shuffled = (deck, random = Math.random) => {
 	let srcIndex = deck.length
 	let dstIndex = 0
 	const clone = deck.slice(0)
-	const result = new Array(srcIndex)
+	const result = Array.from({length: srcIndex})
 	
 	while(srcIndex) {
 		let randIndex = (srcIndex * random()) | 0

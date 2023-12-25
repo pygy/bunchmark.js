@@ -1,0 +1,14 @@
+{
+    "name": "@bunchmark/cil",
+    "version": "1.0",
+    "license": "ISC",
+    "description": "The bunchmark statistical routines.",
+    "keywords": [
+        "statistics", "stats", "median", "MAD", "median absolute deviation",
+        "quickselect", "percentile", "quantile",
+        "Mann", "Whitney", "U", "Wilcoxon", "rank-sum",
+        "sf", "cdf", "ppf", "pnorm", "qnorm"
+    ],
+    "type": "module",
+    "exports": {".": "./stats.js"}
+}

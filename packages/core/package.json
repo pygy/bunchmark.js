@@ -1,0 +1,27 @@
+{
+  "name": "bunchmark",
+  "version": "0.0.5",
+  "description": "benchmarking lib",
+  "type": "module",
+  "main": "bunchmark.js",
+  "scripts": {
+    "test": "bash run test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pygy/bunchmark.js.git"
+  },
+  "keywords": [
+    "benchmark"
+  ],
+  "author": "Pierre-Yves Gérardy",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pygy/bunchmark.js/issues"
+  },
+  "homepage": "https://github.com/pygy/bunchmark.js#readme",
+  "devDependencies": {
+    "eslint": "^7.13.0",
+    "ospec": "^4.1.1"
+  }
+}

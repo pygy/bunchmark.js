@@ -1,27 +1,30 @@
 {
-  "name": "bunchmark",
-  "version": "0.0.5",
-  "description": "benchmarking lib",
+  "name": "bunchmark-root",
+  "version": "None, this is a meta-package that isn't meant to be released",
+  "description": "This repo contains the various packages that make up the *bunchmark* benchmarking suite.",
   "type": "module",
-  "main": "bunchmark.js",
-  "scripts": {
-    "test": "bash run test"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/pygy/bunchmark.js.git"
-  },
-  "keywords": [
-    "benchmark"
-  ],
-  "author": "Pierre-Yves Gérardy",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/pygy/bunchmark.js/issues"
-  },
-  "homepage": "https://github.com/pygy/bunchmark.js#readme",
   "devDependencies": {
-    "eslint": "^7.13.0",
-    "ospec": "^4.1.1"
-  }
+    "c8": "^8.0.1",
+    "compose-regexp": "^0.7.1",
+    "gosub": "^2.0.0",
+    "ospec": "^4.2.0"
+  },
+  "scripts": {
+    "-- docs --": "-- : --",
+    "docs": "node ./scripts/toc.js ./packages/",
+    "docs-all": "gosub docs-stats",
+    "docs-stats": "gosub docs stats/README.md",
+    "-- install --": "-- : --",
+    "install-all": "gosub install-stats",
+    "install-stats": "cd packages/stats; gosub --raw install; cd -",
+    "-- tests -- ": "-- : --",
+    "test": "ospec './packages/**/tests/**/*.js'",
+    "test-stats": "cd ./packages/stats && gosub test",
+    "-- other --": "-- : --",
+    "all-done": "# We're Done",
+    "cover": "c8 --all --include packages ./node_modules/.bin/ospec './packages/**/tests/**/*.js'; c8 report -r html",
+    "-- : --": "-- : --"
+  },
+  "author": "",
+  "license": "ISC"
 }
