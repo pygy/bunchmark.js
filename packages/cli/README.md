@@ -2,7 +2,7 @@
 
 `@bunchmark/cli` lets one bencmark JS code from the CLI
 
-[Quick demo](./assets/Bunchmark.webm)
+[Quick demo](https://github.com/pygy/bunchmark.js/assets/54515/f25b6142-f484-47dd-a1f0-d163a9392b2f)
 
 ## Usage
 
