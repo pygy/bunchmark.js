@@ -24,11 +24,11 @@ export async function run(options) {
         if (result === null) return
 
         const {entries, reps, i} = result
-        const soFar = i+1+"/"+reps
+
         const quantiles = entries && entries[0].workspace.length > 2 && entries.map(e => getQuantiles(e.workspace))
 
         const children = [
-            h(Text, {bold:true}, i+1, "/", reps),
+            h(Text, {bold:true}, (i+!done), "/", reps),
             showHistogram && quantiles && h(Histogram, {entries, quantiles}),
             showQuartiles  && quantiles && h(QuantileTable, {entries, quantiles}),
             showPValues && h(PValues, {entries, test: wilcoxon, set: "chronological"})

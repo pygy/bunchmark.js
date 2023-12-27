@@ -91,7 +91,9 @@ const tasks = [
 
 await run({
 	reps: 100,
-	showPValues: false,
+	showQuartiles: true,
+	showPValues: true,
+	showHistogram: false,
 	preamble,
 	beforeEach() {
 		// runs before every testing streak.

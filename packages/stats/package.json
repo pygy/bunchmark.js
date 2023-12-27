@@ -1,6 +1,6 @@
 {
 	"name": "@bunchmark/stats",
-	"version": "1.0.0-pre-2",
+	"version": "1.0.0-pre-3",
 	"license": "ISC",
 	"description": "The bunchmark statistical routines.",
 	"keywords": [
