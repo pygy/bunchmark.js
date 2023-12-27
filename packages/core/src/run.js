@@ -166,7 +166,6 @@ function isTask(iter) {
 
 /**
  * @param {Options} options
- * @param {((o:Options)=>Sampler[])} compiler
  * @returns {Promise<Result>}
  */
 async function run(options) {

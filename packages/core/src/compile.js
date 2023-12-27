@@ -76,7 +76,7 @@ ${stringify({ run })}
  * @param {Bakable} bakable
  * @returns {string}
  */
-function bake({ tasks, preamble = "", beforeEach = "", afterEach = "", header, footer }) {
+function bake({ tasks, preamble = "", beforeEach = "", afterEach = "", footer }) {
     return `
 ${stringify({ preamble })};
 
@@ -93,7 +93,7 @@ ${footer(result_uid)}
  * @returns {Sampler[]}
  */
 function compiler({ tasks, preamble = "", beforeEach = "", afterEach = "" }) {
-    const source = bake({ tasks, preamble, beforeEach, afterEach, header, footer });
+    const source = bake({ tasks, preamble, beforeEach, afterEach, footer });
     /**
      * @type {Sampler[]} samplers
      */

@@ -37,7 +37,7 @@ export type Options = {
 	reps?: number
 	calibrationReps?: number
 	handle?: {}
-	compiler?: (o:Options)=>Sampler[]
+	compiler?: (o:Options)=>(Promise<Sampler[]>|Sampler[])
 	onTick?: (t: Result)=>void
 }
 
