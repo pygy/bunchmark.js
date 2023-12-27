@@ -11,7 +11,7 @@ In a nutshell:
 import {run} from '@bunchmark/cli'
 
 await run({
-    prologue () => {
+    preamble: () => {
         let result; setTimeout(()=>console.log(result))
         const ary = Array.from({length: 100}, ()=>Math.random())
     }
@@ -40,3 +40,5 @@ await run({
 process.exit(0)
 
 ```
+
+### TODO: document every possible option

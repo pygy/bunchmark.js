@@ -1,5 +1,5 @@
 // @ts-check
-import {run} from "./core.js"
+import {run} from "@bunchmark/core"
 
 // import {pimpStats} from './stats.js'
 

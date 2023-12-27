@@ -6,6 +6,6 @@ This repo contains the various packages that make up the *bunchmark* benchmarkin
 
 - *[core](./packages/core/):* The core benchmarking system
 - *[stats](./packages/stats/):* Robust statistics
-- *[viz](./packages/viz/):* Routines for building histograms
-- *[cli](./packages/cli/):* The library 
-- *[web](./package/web):* 
+- *[presentation](./packages/presentation/):* Private routines for formatting data (used in the `cli`/`web` apps).
+- *[cli](./packages/cli/):* The CLI runner
+- *web:*  JSPer-like interface. TODO.
