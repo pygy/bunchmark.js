@@ -2,6 +2,8 @@
 
 `@bunchmark/cli` lets one bencmark JS code from the CLI
 
+[Quick demo](./assets/Bunchmark.webm)
+
 ## Usage
 
 In a nutshell:
