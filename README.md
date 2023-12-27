@@ -8,4 +8,4 @@ This repo contains the various packages that make up the *bunchmark* benchmarkin
 - *[stats](./packages/stats/):* Robust statistics
 - *[presentation](./packages/presentation/):* Private routines for formatting data (used in the `cli`/`web` apps).
 - *[cli](./packages/cli/):* The CLI runner
-- *web:*  JSPer-like interface. TODO.
+- *web:*  JSPerf-like interface. TODO.
