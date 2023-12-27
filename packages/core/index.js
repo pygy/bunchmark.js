@@ -1,2 +1,2 @@
 // This is here until unpkg supports the `exports` field in package.json
-export * from "core.js"
+export * from "./core.js"
