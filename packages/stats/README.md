@@ -91,10 +91,6 @@ Returns the [**m**edian **a**bsolute **d**eviation](https://en.wikipedia.org/wik
 
 It uses `quickselectFloat(array, (a, b) => abs(a - median) - abs(b - median))` under the hood and reorders the values in `array` accordingly.
 
-### logMAD(array, logMedian = Math.log2(median(array)))
-
-Similar to MAD, but works in log space. This is better suited for the benchmark use case since the timing distributions look log-normal (or even more skewed). The MAD gives undue weight to the right tail.
-
 ## Statistical tests
 
 We provide the Wilcoxon rank-sum test and the Mann-Whitne U test.
