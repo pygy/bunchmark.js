@@ -1,6 +1,6 @@
 //@ts -check
-import {Fragment, createElement, useState} from 'react'
-import {render} from 'ink'
+import {Fragment, createElement as h, useState} from 'react'
+import {render, Text} from 'ink'
 
 import {run as runBench} from "@bunchmark/core"
 import { wilcoxon, getQuantiles } from "@bunchmark/stats"
@@ -15,19 +15,25 @@ export async function run(options) {
     const showHistogram = options.showHistogram ?? true
     const showQuartiles = options.showQuartiles ?? false
     const showPValues = options.showPValues ?? true
-    const Counter = () => {
+    const UI = () => {
         /**
          * @type 
          */
-        let entries
-        void ([entries, setEntries] = useState(null))
-        const quantiles = entries && entries.map(e => getQuantiles(e.workspace))
+        let result;
+        void ([result, setEntries] = useState(null))
+        if (result === null) return
+
+        const {entries, reps, i} = result
+        const soFar = i+1+"/"+reps
+        const quantiles = entries && entries[0].workspace.length > 2 && entries.map(e => getQuantiles(e.workspace))
+
         const children = [
-            showHistogram && entries && createElement(Histogram, {entries, quantiles}),
-            showQuartiles && entries && createElement(QuantileTable, {entries, quantiles}),
-            showPValues && entries && createElement(PValues, {entries, test: wilcoxon, set: "chronological"})
+            h(Text, {bold:true}, i+1, "/", reps),
+            showHistogram && quantiles && h(Histogram, {entries, quantiles}),
+            showQuartiles  && quantiles && h(QuantileTable, {entries, quantiles}),
+            showPValues && h(PValues, {entries, test: wilcoxon, set: "chronological"})
         ]
-        return createElement(Fragment, null, ...children)
+        return h(Fragment, null, ...children)
     }
 
 
@@ -36,21 +42,21 @@ export async function run(options) {
     let last = Date.now()
     const onTick = options.onTick ?? (()=>{})
 
-    options.onTick = ({entries, i, rep}) => {
+    options.onTick = (result) => {
         const now = Date.now()
         if (setEntries != null && last < now - 300) {
             last = now
-            setEntries(entries)
+            setEntries(result)
         }
-        onTick({data, i, rep})
+        onTick(result)
     }
 
 
-    render(createElement(Counter))
+    setTimeout(()=>render(h(UI)))
 
-    return runBench(options).then(data=>{
+    return runBench(options).then(result=>{
         done = true
-        setEntries(data.entries)
-        return data
+        setEntries(result)
+        return result
     })
 }

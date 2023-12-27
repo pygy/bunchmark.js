@@ -19,7 +19,8 @@ export { run };
 
 import { shuffled } from "./shuffle.js";
 import { median } from "../../stats/stats.js";
-import {compiler} from "./compile.js"
+
+const {ceil} = Math
 /** 
  * @param {Task} task
  * @returns {Entry}
@@ -101,7 +102,7 @@ async function runOne({ sample, N, result, keepChrono }) {
     // this seems reasonable.
 
     const jitterFactor = 2 ** (1 + Math.random()) / 2;
-    const reps = N * jitterFactor | 0;
+    const reps = ceil(N * jitterFactor)
     const t = await sample(reps) / reps;
     result.workspace.push(t);
     if (keepChrono)
