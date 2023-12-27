@@ -37,6 +37,8 @@ o("statistical tests", ()=>{
     o(s.z).equals(-6.959301308559146)
     o(s.p).satisfies(roughlyEquals(3.4196443339155714e-12, 2))
 
+    o(()=>wilcoxon([1,2,3,4,5,6,7,8,9,10,11], [[1,2,3,4,5,6,7,8,9,10,11, 12]])).throws(RangeError)
+
     s = mwu(...dataPair)
     o(s).deepEquals(mwUnaive(...dataPair))
     o(s.U).equals(4538)

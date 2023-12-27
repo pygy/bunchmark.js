@@ -50,8 +50,6 @@ export function mwUonSortedArrays(A,B) {
 
 	const Ua = RSa - (Na * (Na + 1)) / 2
     const Ub = NNab - Ua
-    const Ubb = RSb -(Nb *(Nb + 1))/2
-    if (Ub !== Ubb) throw new Error("Bad Ub")
     const U = Math.max(Ua, Ub)
 	// determine the p-value using the asymptotic method with tie correction
     // 1) get the mean and std dev
@@ -60,8 +58,8 @@ export function mwUonSortedArrays(A,B) {
 	// 2) compute the z statistic
 	const z = (U - mu - 0.5) / s // -0.5 for continuity correction
     // 3) get the corresponding p-value
-	const p = pForZ(-z) * 2 // * 2 because two tails
-	return {U, z, p, mu, s}
+	const p = pForZ(-z, true) * 2 // * 2 because two tails
+	return {U, z, p}
 }
 
 
@@ -108,5 +106,5 @@ export function mwUnaive(A, B) {
 	const z = (U - mu - 0.5) / s // -0.5 for continuity correction
     // 3) get the corresponding p-value
 	const p = pForZ(-z) * 2 // * 2 because two tails
-	return {U, z, p, mu, s}
+	return {U, z, p}
 }

@@ -3,15 +3,15 @@
 // from scipy import stats
 // import json
 
-// with open("./packages/stats/z-table.js","w") as zt:
+// with open("./packages/stats/z-table.json","w") as zt:
 //     json.dump([stats.norm.sf(z/1000) for z in range (10000)], zt)
 
 // Get the p value by indexing zTzble with `Math.round(z*1000)` 
 // (floor or ceil may be more accurate)
 export {pForZ, zTable}
 
-const pForZ = z => z < 0 ? _pForZ(-z) : 1 - _pForZ(z)
-const _pForZ = (z) => zTable[Math.round(z * 1000)] || (console.warn("|z| is too large, z-table overflow"), zTable[zTable.length - 1])
+const pForZ = (z, silent = false) => z < 0 ? _pForZ(-z, silent) : 1 - _pForZ(z, silent)
+const _pForZ = (z, silent) => zTable[Math.round(z * 1000)] || (!silent && console.warn("|z| is too large, z-table overflow"), zTable[zTable.length - 1])
 // const pForZ = _pForZ
 const zTable =  [
     0.5, 0.49960105778608893, 0.49920211597111985, 0.49880317495403353, 0.49840423513376836,

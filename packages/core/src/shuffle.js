@@ -1,3 +1,4 @@
+//@ts-check
 // MIT License
 
 // Copyright (c) 2018 Phil Busby
@@ -21,6 +22,13 @@
 // SOFTWARE.
 
 // Good old Fischer Yates
+
+/**
+ * @template T
+ * @param {T[]} deck 
+ * @param {()=>number} random 
+ * @returns {T[]}
+ */
 
 export const shuffled = (deck, random = Math.random) => {
 	let srcIndex = deck.length

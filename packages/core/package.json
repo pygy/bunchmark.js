@@ -1,12 +1,9 @@
 {
-  "name": "bunchmark",
-  "version": "0.0.5",
+  "name": "@bunchmark/core",
+  "version": "1.0.0-pre-0",
   "description": "benchmarking lib",
   "type": "module",
-  "main": "bunchmark.js",
-  "scripts": {
-    "test": "bash run test"
-  },
+  "exports": {".": "./core.js"},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/pygy/bunchmark.js.git"
@@ -19,9 +16,5 @@
   "bugs": {
     "url": "https://github.com/pygy/bunchmark.js/issues"
   },
-  "homepage": "https://github.com/pygy/bunchmark.js#readme",
-  "devDependencies": {
-    "eslint": "^7.13.0",
-    "ospec": "^4.1.1"
-  }
+  "homepage": "https://github.com/pygy/bunchmark.js#readme"
 }

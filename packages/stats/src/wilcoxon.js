@@ -59,6 +59,6 @@ function wilcoxon_raw(diff) {
 	)/24)
 	const sign = T - m < 0 ? -1 : 1
 	const z = (T - m - sign * 0.5) / sd
-	const p = pForZ(-abs(z)) * 2
+	const p = pForZ(-abs(z), true) * 2
 	return {T, z, p}
 }

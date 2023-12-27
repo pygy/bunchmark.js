@@ -1,14 +1,23 @@
 {
-    "name": "@bunchmark/cil",
-    "version": "1.0",
-    "license": "ISC",
-    "description": "The bunchmark statistical routines.",
-    "keywords": [
-        "statistics", "stats", "median", "MAD", "median absolute deviation",
-        "quickselect", "percentile", "quantile",
-        "Mann", "Whitney", "U", "Wilcoxon", "rank-sum",
-        "sf", "cdf", "ppf", "pnorm", "qnorm"
-    ],
-    "type": "module",
-    "exports": {".": "./stats.js"}
+	"name": "@bunchmark/stats",
+	"version": "1.0.0-pre-0",
+	"license": "ISC",
+	"description": "The bunchmark statistical routines.",
+	"keywords": [
+		"statistics", "stats", "median", "MAD", "median absolute deviation",
+		"quickselect", "percentile", "quantile",
+		"Mann", "Whitney", "U", "Wilcoxon", "rank-sum",
+		"sf", "cdf", "ppf", "pnorm", "qnorm"
+	],
+	"type": "module",
+	"exports": {".": "./stats.js"},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pygy/bunchmark.js.git"
+	},
+	"author": "Pierre-Yves Gérardy",
+	"bugs": {
+		"url": "https://github.com/pygy/bunchmark.js/issues"
+	},
+	"homepage": "https://github.com/pygy/bunchmark.js#readme"
 }

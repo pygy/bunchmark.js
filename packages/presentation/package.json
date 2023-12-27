@@ -1,0 +1,19 @@
+{
+    "name": "@bunchmark/presentation",
+    "version": "1.0.0-pre-0",
+    "description": "The Bunchmark data presentation utilities",
+    "type": "module",
+    "exports": {".": "./viz.js"},
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/pygy/bunchmark.js.git"
+    },
+    "keywords": ["bunchmark", "benchmark"],
+    "author": "Pierre-Yves Gérardy",
+    "license": "ISC",
+    "bugs": {
+      "url": "https://github.com/pygy/bunchmark.js/issues"
+    },
+    "homepage": "https://github.com/pygy/bunchmark.js#readme"
+  }
+  

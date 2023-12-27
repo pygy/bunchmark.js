@@ -1,0 +1,28 @@
+{
+	"name": "@bunchmark/cli",
+	"version": "1.0.0-pre-0",
+	"license": "ISC",
+	"description": "The bunchmark CLI runner",
+	"keywords": [
+		"benchmark", "cli"
+	],
+	"type": "module",
+	"exports": {".": "./cli.js"},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/pygy/bunchmark.js.git"
+	},
+	"author": "Pierre-Yves Gérardy",
+	"bugs": {
+		"url": "https://github.com/pygy/bunchmark.js/issues"
+	},
+	"homepage": "https://github.com/pygy/bunchmark.js#readme",
+  "dependencies": {
+    "@inkkit/ink-table": "^1.0.0",
+    "ink": "^4.4.1",
+    "react": "^18.2.0",
+    "@bunchmark/core": "1.0.0-pre-0",
+    "@bunchmark/presentation": "1.0.0-pre-0",
+    "@bunchmark/stats": "1.0.0-pre-0"
+  }
+}

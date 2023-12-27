@@ -1,5 +1,5 @@
 import o from "ospec"
-import {median, MAD, percentile, quickSelectFloat, quickselect} from "../stats.js"
+import {median, MAD, percentile, quickselect, quickSelectFloat} from "../stats.js"
 
 o.spec('quickselect', ()=>{
     o('basics', ()=>{
@@ -55,7 +55,7 @@ o('median', ()=>{
 })
 
 o('MAD', ()=> {
-    o(MAD([1,2,3,4,5])).equals(1)
+    o(MAD([1,2,3,4,5], 3)).equals(1)
     o(MAD([1,2,3,4,5,6,6,8])).equals(1.5)
     o(MAD([1,2,3,4,5,6,7,8])).equals(2)
     o(MAD([1,2,3,4,5,6,7,8,9])).equals(2)

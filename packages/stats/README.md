@@ -91,6 +91,10 @@ Returns the [**m**edian **a**bsolute **d**eviation](https://en.wikipedia.org/wik
 
 It uses `quickselectFloat(array, (a, b) => abs(a - median) - abs(b - median))` under the hood and reorders the values in `array` accordingly.
 
+### logMAD(array, logMedian = Math.log2(median(array)))
+
+Similar to MAD, but works in log space. This is better suited for the benchmark use case since the timing distributions look log-normal (or even more skewed). The MAD gives undue weight to the right tail.
+
 ## Statistical tests
 
 We provide the Wilcoxon rank-sum test and the Mann-Whitne U test.
@@ -131,7 +135,7 @@ Hereunder, "variable" is meant in the statistical sense.
 
 Gets the p-value corresponding to a z-value (the probability of finding a value smaller than z by chance in a normally distributied variable).
 
-This is based on a z-table built with `scipy.stats.sf` with `0.001` granularity in the z-domain, for `z` between `0` and `9.999`. That level of precision is sufficient for our use case.
+This is based on a z-table built with `scipy.stats.sf()` with `0.001` granularity in the z-domain, for `z` between `0` and `9.999`. That level of precision is sufficient for our use case.
 
 To get even more precision, we'd have to approximate the integral from `-Infinity` to `z` for the normal distribution using the sum of trapeze algorithm (there are no closed-form equations to compute these values).
 

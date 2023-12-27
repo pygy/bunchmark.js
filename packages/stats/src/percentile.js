@@ -1,27 +1,58 @@
-export const median = (ary) => {
-	return percentile(ary, .5)
-}
-export const MAD = (results, med = median(results)) => median(results.map(r => Math.abs(r - med)))
+const {abs} = Math
 
-export function percentile(ary, n, left = 0) {
+
+export const median = (ary, comparator) => {
+	return percentile(ary, .5, comparator)
+}
+// Todo benchmark both impls, especially on even-sized arrays.
+// export const MAD = (results, med = median(results)) => {
+// 	return median(results.map(r => Math.abs(r - med)), (a,b)=>(a-b))
+// }
+
+export const MAD = (results, med = median(results)) => median(results.map(x=> abs(x - med)))
+
+export const MAD2 = (results, med = median(results)) => {
+	const midpoint = (results.length - 1) / 2
+	const comparator = (a, b) => (abs(a - med) - abs(b - med))
+	if ((midpoint|0) === midpoint) {
+		return (abs(median(results,comparator) - med))	
+	} else {
+		const i1 = midpoint|0
+		const r1 = quickSelectFloat(results, i1, comparator)
+		const r2 = quickSelectFloat(results, i1+ 1, i1, comparator)
+		return (abs(r1 - med) + abs(r2 - med)) / 2
+	}
+}
+
+
+
+export function percentile(ary, n, left = 0, comparator) {
+	if (typeof left === 'function') {
+		comparator = left
+		left = 0
+	}
 	const scale = ary.length - 1
-	return quickSelectFloat(ary, n * scale, left * scale)
+	return quickSelectFloat(ary, n * scale, left * scale, comparator)
 }
 
-export function quickSelectFloat(ary, target, left = 0) {
+export function quickSelectFloat(ary, target, left = 0, comparator) {
+	if (typeof left === 'function') {
+		comparator = left
+		left = 0
+	}
 	if(left > target) throw new RangeError("left should be smaller than or equal to target")
 	const floor = target | 0
 	left = Math.ceil(left)
 	// this can happen, mostly in small arrays or when dealing with close float values
-	// it's just a perf loss.
+	// setting it to 0 makes the result right at the cost of some perf.
 	if (left === floor + 1) left = 0
 	if(left > target) throw new RangeError("left should be smaller than or equal to target")
 	if (target === floor) {
-		return quickselect(ary, floor, left)
+		return quickselect(ary, floor, left, comparator)
 	} else {
 		const diff = target - floor
 		// linear interpollation between the two values
-		return quickselect(ary, floor, left) * (1-diff) + quickselect(ary, floor + 1, floor) * diff
+		return quickselect(ary, floor, left, comparator) * (1-diff) + quickselect(ary, floor + 1, floor, comparator) * diff
 	}
 }
 
@@ -43,9 +74,6 @@ export function quickSelectFloat(ary, target, left = 0) {
 // TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR PERFORMANCE OF
 // THIS SOFTWARE.
 
-// modification
-// hardcoding a qnd comparator makes it ~twice as fast
-
 export function quickselect(arr, k, left = 0, comparator) {
 	if (typeof left !== 'function' && typeof comparator !== 'function') {
 		quickselectStepInline(arr, k, left)
@@ -62,6 +90,7 @@ export function quickselect(arr, k, left = 0, comparator) {
 
 function quickselectStep(arr, k, left = 0, right = arr.length -1, compare) {
 	while (right > left) {
+		// console.log({left, right, arr, arrmed: arr.map(x=>abs(x-median([...arr])))})
 		if (right - left > 600) {
 			var n = right - left + 1;
 			var m = k - left + 1;
@@ -86,6 +115,7 @@ function quickselectStep(arr, k, left = 0, right = arr.length -1, compare) {
 			j--;
 			while (compare(arr[i], t) < 0) i++;
 			while (compare(arr[j], t) > 0) j--;
+			// console.log({i, j, arr, arrmed: arr.map(x=>abs(x-median([...arr])))})
 		}
 
 		if (compare(arr[left], t) === 0) swap(arr, left, j);
@@ -93,12 +123,14 @@ function quickselectStep(arr, k, left = 0, right = arr.length -1, compare) {
 			j++;
 			swap(arr, j, right);
 		}
+		// console.log({i, j, arr, arrmed: arr.map(x=>abs(x-median([...arr])))})
 
 		if (j <= k) left = j + 1;
 		if (k <= j) right = j - 1;
 	}
 }
 
+// hardcoding the comparator for the base case makes it ~twice as fast
 function quickselectStepInline(arr, k, left=0, right=arr.length -1) {
 	while (right > left) {
 		if (right - left > 600) {
