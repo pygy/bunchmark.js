@@ -66,11 +66,11 @@ Our implementation is derived from Vladimir Agafonkin's https://github.com/mourn
 
 ### quickselectFloat(array, i, left): number
 
-Like `quickselect` but `i`, and `left`, can be floats. If the aren't integers, this will return a linear [interpolation](https://en.wikipedia.org/wiki/Percentile#The_linear_interpolation_between_closest_ranks_method)(†) between `Math.abs(i)` and `abs(i) + 1` proporional to the decimal part. 
+Like `quickselect` but `i`, and `left`, can be floats. If the aren't integers, this will return a linear [interpolation](https://en.wikipedia.org/wiki/Percentile#The_linear_interpolation_between_closest_ranks_method)(†) between `Math.floor(i)` and `ceil(i)` proporional to the decimal part. 
 
-`array` ends up with `array[abs(i) + 1]` equals to `array.sort((a, b) => a-b)[abs(i) + 1]` (see `quickselect()` for how the rest of the array ends up).
+`array` ends up with `array[ceil(i)]` equals to `array.sort((a, b) => a-b)[ceil(i)]` (see `quickselect()` for how the rest of the array ends up).
 
-Values at indices smaller than `abs(left) + 1` are left untouched (see `quickselect` for the details)
+Values at indices smaller than `ceil(left)` are left untouched (see `quickselect` for the details)
 
 †. My implementation is quite naive, there are considerations in that section that are beyond my current understanding.
 
