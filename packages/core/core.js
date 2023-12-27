@@ -1,2 +1,2 @@
 export {run} from "./src/run.js"
-export {compiler} from "./src/compile.js"
+export {compiler, bake} from "./src/compile.js"
