@@ -18,7 +18,7 @@ export { run };
  */
 
 import { shuffled } from "./shuffle.js";
-import { median } from "../../stats/stats.js";
+import { median } from "@bunchmark/stats";
 
 const {ceil} = Math
 /** 
@@ -127,7 +127,7 @@ function* runGenerator(options, state) {
         const sh = shuffled(tasks);
         if (i < calibrationRuns) {
             for (const task of tasks) {
-                findN(task, calibrationTargetDuration);
+                yield { kind: "task", task: findN(task, calibrationTargetDuration) };
             }
         }
         else {
@@ -169,6 +169,7 @@ function isTask(iter) {
  * @returns {Promise<Result>}
  */
 async function run(options) {
+
     const {compiler = (await import("./compile.js")).compiler} = options
     const samplers = await compiler(options);
 
