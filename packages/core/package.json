@@ -1,6 +1,6 @@
 {
   "name": "@bunchmark/core",
-  "version": "1.0.0-pre-7",
+  "version": "1.0.0-pre-8",
   "description": "benchmarking lib",
   "type": "module",
   "exports": {".": "./core.js"},
@@ -18,6 +18,6 @@
   },
   "homepage": "https://github.com/pygy/bunchmark.js#readme",
   "dependencies": {
-    "@bunchmark/stats": "1.0.0-pre-4"
+    "@bunchmark/stats": "1.0.0-pre-5"
   }
 }
