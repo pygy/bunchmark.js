@@ -23,6 +23,7 @@
     "publish-core": "cd packages/core && gosub --raw publish && gosub --raw install && cd -",
     "publish-presentation": "cd packages/presentation && gosub --raw publish && gosub --raw install && cd -",
     "publish-stats": "cd packages/stats && gosub --raw publish && gosub --raw install && cd -",
+    "publish-web": "cd packages/web && gosub --raw publish && gosub --raw install && cd -",
     "-- tests -- ": "-- : --",
     "test": "ospec './packages/**/tests/**/*.js'",
     "test-stats": "cd ./packages/stats && gosub test",

@@ -1,6 +1,6 @@
 export { compiler }
 
-import { bake } from "@bunchmark/core@1.0.0-pre-7"
+import { bake } from "@bunchmark/core"
 
 function compiler({ tasks, preamble = "", beforeEach = "", afterEach = "", html = "" }) {
 	setIframeSrc(html, bake({ tasks, preamble, beforeEach, afterEach, footer: iframeFooter }))
