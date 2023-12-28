@@ -1,6 +1,6 @@
 {
 	"name": "@bunchmark/cli",
-	"version": "1.0.0-pre-5",
+	"version": "1.0.0-pre-6",
 	"license": "ISC",
 	"description": "The bunchmark CLI runner",
 	"keywords": [
@@ -21,7 +21,7 @@
     "@inkkit/ink-table": "^1.0.0",
     "ink": "^4.4.1",
     "react": "^18.2.0",
-    "@bunchmark/core": "1.0.0-pre-6",
+    "@bunchmark/core": "1.0.0-pre-7",
     "@bunchmark/presentation": "1.0.0-pre-3",
     "@bunchmark/stats": "1.0.0-pre-4"
   }
