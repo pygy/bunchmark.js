@@ -1,4 +1,11 @@
-export {getBins}
+export {getBins, getBounds, QNDMedian}
+
+
+const QNDMedian = ary => {
+  ary.sort((a,b)=>{a-b})
+  if (ary.length % 2) return ary[(ary.length - 1)/2]
+  else return (ary[(ary.length)/2-1] + ary[(ary.length)/2])/2
+}
 
 function getBounds(entries) {
   const min = Math.min(...entries.map(e => Math.min(...e.workspace)))
