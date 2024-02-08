@@ -1,4 +1,4 @@
-export {timelines}
+export {makeTimelines}
 
 import {scientific, getBounds, QNDMedian} from "../presentation.js"
 
@@ -6,7 +6,7 @@ const {log: mlog, max: mmax, min:mmin, floor: mfloor} = Math
 
 let RRR = 0
 
-function timelines({entries, totalEntries, target}) {
+function makeTimelines({entries, totalEntries, target}) {
   RRR++
   const {min,max} = getBounds(entries)
   const lmin = mlog(min)

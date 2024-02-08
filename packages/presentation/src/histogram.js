@@ -1,8 +1,10 @@
 // Rudimentary visualisations for the Web
-import {scientific, getRanks, getBins} from "../presentation.js"
+export { makeHistograms }
+
+import { scientific, getRanks, getBins } from "../presentation.js"
 
 const {log: mlog, max: mmax} = Math
-export function histogram(entries, quantiles, _N, target) {
+function makeHistograms(entries, quantiles, _N, target) {
   const {min,max, N, bins, bounds} = getBins(entries, quantiles)
   const ranks = getRanks(quantiles)
  
