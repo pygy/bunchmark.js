@@ -1,4 +1,4 @@
-export { compiler }
+export { compiler, iframeSandbox }
 
 import { bake } from "@bunchmark/core"
 
@@ -7,15 +7,14 @@ function compiler({ tasks, preamble = "", beforeEach = "", afterEach = "", html 
 
 	const samplers = getSamplers(tasks)
 	return new Promise(fulfill => {
-		ifr.onload = () => {
+		iframeSandbox.onload = () => {
 			fulfill(samplers)
 		}
 	})
 }
 
-const ifr = document.createElement("iframe")
-ifr.style = "display:none"
-ifr.sandbox = "allow-scripts"
+const iframeSandbox = document.createElement("iframe")
+iframeSandbox.sandbox = "allow-scripts"
 
 
 // https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements
@@ -45,8 +44,11 @@ window.addEventListener("message", ({origin, data: {index, N}}) => {
 `}
 
 function setIframeSrc(html, scriptSrc) {
-	if (ifr.parent == null) document.body.appendChild(ifr)
-	ifr.srcdoc = `
+	if (iframeSandbox.parentElement == null) {
+		iframeSandbox.style = "display:none"
+		document.body.appendChild(iframeSandbox)
+	}
+	iframeSandbox.srcdoc = `
 <!doctype html>
 <meta charset="utf8"><title>Bunchmark sandbox</title>
 ${sanitizeHTML(html)}
@@ -71,7 +73,7 @@ function getSamplers(tasks) {
 					}
 				}
 			})
-			ifr.contentWindow.postMessage({ index, N }, "*")
+			iframeSandbox.contentWindow.postMessage({ index, N }, "*")
 		})
 	})
 }

@@ -1,6 +1,6 @@
 {
 	"name": "@bunchmark/web",
-	"version": "1.0.0-pre-4",
+	"version": "1.0.0-pre-6",
 	"license": "ISC",
 	"description": "The bunchmark web-related routines.",
 	"keywords": [
