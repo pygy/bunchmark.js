@@ -40,7 +40,7 @@ function makeTimelines({entries, totalEntries, target}) {
       style="font-family:sans-serif;font-weight: bold;text-shadow: 1px 1px 1px #fffa, -1px -1px 1px #fffa"
     >${name}</text>`
     if (dotWidth > 1) {
-      p("B")
+      console.log("TODO: support low res data")
     } else {
       const threshold = 1/dotWidth
       const truncated = mfloor(threshold)

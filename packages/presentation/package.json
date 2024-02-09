@@ -1,6 +1,6 @@
 {
     "name": "@bunchmark/presentation",
-    "version": "1.0.0-pre-11",
+    "version": "1.0.0-pre-12",
     "description": "The Bunchmark data presentation utilities",
     "type": "module",
     "exports": {".": "./presentation.js"},
