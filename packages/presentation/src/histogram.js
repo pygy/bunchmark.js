@@ -4,7 +4,7 @@ export { makeHistograms }
 import { scientific, getRanks, getBins } from "../presentation.js"
 
 const {log: mlog, max: mmax} = Math
-export function makeHistograms(entries, quantiles, target) {
+function makeHistograms(entries, quantiles, target) {
   const margin = 30;
   const totalWidth = Number(target.clientWidth)
   const {min, max, N, bins} = getBins(entries, quantiles, totalWidth/2)
