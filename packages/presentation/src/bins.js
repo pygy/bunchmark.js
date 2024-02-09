@@ -58,7 +58,7 @@ function getBins(entries, quantiles, maxN) {
 
 function interpolate(exact, ham, n, max) {
 	n = mmin(n, max)
-	p = n/max
+	const p = n/max
 	return (1 - p) * exact + p * ham
 }
 
