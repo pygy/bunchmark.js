@@ -6,13 +6,20 @@ const QNDMedian = ary => {
   if (ary.length % 2) return ary[(ary.length - 1)/2]
   else return (ary[(ary.length)/2-1] + ary[(ary.length)/2])/2
 }
+const {
+  exp: mexp,
+  floor: mfloor, 
+  log: mlog, 
+  max: mmax,
+  min: mmin, 
+  round: mround,
+} = Math
 
 function getBounds(entries) {
-  const min = Math.min(...entries.map(e => Math.min(...e.workspace)))
-  const max = Math.max(...entries.map(e => Math.max(...e.workspace)))
+  const min = mmin(...entries.map(e => mmin(...e.workspace)))
+  const max = mmax(...entries.map(e => mmax(...e.workspace)))
   return {min, max}
 }
-
 
 function getBins(entries, quantiles, maxN) {
   const {max, min} = getBounds(entries)
@@ -23,34 +30,38 @@ function getBins(entries, quantiles, maxN) {
     // find the non-outlier bounds using the IQR
     // method. Given the data distribution,
     // we work in log space as we do for the rest.
-    const lq1 = Math.log(q.q1)
-    const lq3 = Math.log(q.q3)
+    const lq1 = mlog(q.q1)
+    const lq3 = mlog(q.q3)
     const logIQR = lq3 - lq1
     
-    largestIQR = Math.max(logIQR, largestIQR)
+    largestIQR = mmax(logIQR, largestIQR)
     const scaleFactor = 1.75
-    minHamBound = Math.min(minHamBound, Math.exp(lq1 - scaleFactor * logIQR))
-    maxHamBound = Math.max(maxHamBound, Math.exp(lq3 + scaleFactor * logIQR))
+    minHamBound = mmin(minHamBound, mexp(lq1 - scaleFactor * logIQR))
+    maxHamBound = mmax(maxHamBound, mexp(lq3 + scaleFactor * logIQR))
   })
-  // clamp the bound to the actual data if needed
-  if (maxN < 16){
-    minHamBound = Math.max(minHamBound, min)
-    maxHamBound = Math.min(maxHamBound, max)
-  }
-  // maxN = Math.max(0, (Math.min(600,
-  //  (entries[0].workspace.length)/(largestIQR)*(maxHamBound-minHamBound)|0)
-  // ))
-  //   // p(N, 1/(largestIQR)*(maxHamBound-minHamBound), tasks[0].results.length)
-  //   maxN = 50
-  // // N=Math.min(3,N)
-  
-  
-  // TODO: find a better way to determin the number of bins
-  // take data spread into account. The ratio beween the average 
-  // normaized IQR and the difference between the fastest and 
-  // slowest sound like a good option
-  return addBins(entries, maxN, minHamBound, maxHamBound)
+  const N = entries[0].workspace.length
+  // one bin per 10 points in the IQR
+  // (half of N are, per the IQR definition)
+  const binWidth = largestIQR / mmax(N / 2 / 10, 1)
+  const span = mlog(maxHamBound)-mlog(minHamBound)
+  const numBins = mmin(span / binWidth, maxN)
+
+  return addBins(
+    entries,
+    mround(numBins),
+    // gradually shift from the whole data set
+    // to only the non-spam data points.
+    interpolate(min, minHamBound, N, 30),
+    interpolate(max, maxHamBound, N, 30),
+  )
 }
+
+function interpolate(exact, ham, n, max) {
+  n = mmin(n, max)
+  p = n/max
+  return (1 - p) * exact + p * ham
+}
+
 
 function addBins(entries, N, min, max) {
   const bounds = Array.from({length: N})
@@ -77,7 +88,7 @@ function addBins(entries, N, min, max) {
 
   entries.forEach((e, i) => {
     e.workspace.forEach(res => {
-      result.bins2[i][Math.floor((res - min)/amplitude)]++
+      result.bins2[i][mfloor((res - min)/amplitude)]++
     })
   })
   return result

@@ -4,14 +4,13 @@ export { makeHistograms }
 import { scientific, getRanks, getBins } from "../presentation.js"
 
 const {log: mlog, max: mmax} = Math
-function makeHistograms(entries, quantiles, _N, target) {
-  const {min,max, N, bins, bounds} = getBins(entries, quantiles)
-  const ranks = getRanks(quantiles)
- 
-  const verticalResolution = 1/(mmax(...bins.map(bin => mmax(...bin))))
+export function makeHistograms(entries, quantiles, target) {
   const margin = 30;
+  const totalWidth = Number(target.clientWidth)
+  const {min, max, N, bins} = getBins(entries, quantiles, totalWidth/2)
+  const ranks = getRanks(quantiles)
+  const verticalResolution = 1/(mmax(...bins.map(bin => mmax(...bin))))
   const marginBottom = 25;
-  const totalWidth = Number(document.body.clientWidth) - margin * 2
   const width = totalWidth / N
   const rowHeight = 30
   const lmax = mlog(max)
@@ -21,7 +20,7 @@ function makeHistograms(entries, quantiles, _N, target) {
   width="${totalWidth}"
   height="${entries.length * (rowHeight + margin + marginBottom) + 3}"
   viewBox="0,0,${totalWidth},${entries.length * (rowHeight + margin + marginBottom)}"
-  style="margin:10px">`
+ >`
   
   entries.forEach((entry, i) => {
     const lmed = mlog(quantiles[i].median)
@@ -78,12 +77,11 @@ function makeHistograms(entries, quantiles, _N, target) {
     >
       ${scientific(quantiles[i].median/1000)}s
     </text>`
-    // src += scale(min, max, base + marginBottom - 8, totalWidth )
-    // src += hLine(bottom + 2, totalWidth, "#333333")
   })
   src += `
 </svg>`
   target.innerHTML=src
+  // fix the position of the text nodes.
   void ([...target.querySelectorAll(".median-text")].forEach(x=>{
     const bbox = x.getBBox()
     if (bbox.x < 0) {
@@ -95,8 +93,6 @@ function makeHistograms(entries, quantiles, _N, target) {
       x.setAttribute("x", `${totalWidth}`)
     }
   }))
-  // throw "SVG"
-  // return {bounds, min, max}
 }
 
 const SVGRect = ({x, y, width, height, fill = "#880000", opacity = 1}) => `

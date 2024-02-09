@@ -15,14 +15,14 @@ function makeTimelines({entries, totalEntries, target}) {
   const verticalResolution = 1/(lmax - lmin)
   const margin = 30
   const marginBottom = 25
-  const totalWidth = Number(document.body.clientWidth) - margin * 2
+  const totalWidth = Number(target.clientWidth)
   const dotWidth = totalWidth / totalEntries
   const rowHeight = 100
   let src = `<svg xmlns="http://www.w3.org/2000/svg"
   width="${totalWidth}"
   height="${entries.length * (rowHeight + margin + marginBottom) + 3}"
   viewBox="0,0,${totalWidth},${entries.length * (rowHeight + margin + marginBottom)}"
-  style="margin:10px">`
+  >`
   
   entries.forEach((entry, i) => {
     const bottom =  (i + 1) * (rowHeight + margin)
