@@ -33,7 +33,7 @@ const iframeFooter = result_uid => {
 window.addEventListener("message", ({origin, data: {index, N}}) => {
 	if (origin === ${origin}) {
 		${result_uid}[index](N).then(time => {
-			window.parent.postMessage({name, time, index, R}, ${origin})
+			window.parent.postMessage({name, time, index}, ${origin})
 		}).catch((error) => {
 		const t = typeof error
 		  error = (error instanceof Error || t !== 'symbol' && t !== 'object' || error === null) ? error : ""
