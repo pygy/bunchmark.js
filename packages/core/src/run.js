@@ -137,7 +137,7 @@ function* runGenerator(options, state) {
             }
 
             for (const j in sh) {
-                yield { kind: "task", task: runOne(sh[j]) };
+                yield { kind: "task", task: runOne(sh[j]), i: sh[j].i };
             }
         }
         yield { kind: "tick", i, reps };
@@ -199,44 +199,48 @@ async function run(options) {
         reject = r;
     });
     async function go() {
+        try {
             /**
              * $typedef IteratorResult<YieldTask | YieldTick, ReturnTick>
              */
             let status;
-        do {
-            await delay(0);
-            try {
-                do {
-                    status = runner.next();
-                    if (!status.done && isTask(status))
-                        await (status.value).task;
-                    else
-                        break;
-                } while (true);
-            }
-            catch (e) {
-                reject(e);
-                return;
-            }
-            // appease TypeScript, this can't ever be null
-            if (status == null) throw new TypeError("Unexpected null")
-            if (!status.done) {
-                if (!isTick(status))
-                    throw new TypeError("Unexpected YieldResult " + JSON.stringify(status.value));
-                runnerOptions.onTick?.({
-                    i: status.value.i - 1,
-                    reps: status.value.reps,
-                    entries: tasks.map(t => t.result)
-                });
-            }
+            do {
+                await delay(0);
+                try {
+                    do {
+                        status = runner.next();
+                        if (!status.done && isTask(status)) await (status.value).task
+                        else break
+                    } while (true);
+                }
+                catch (e) {
+                    if (isTask(status)) e.TaskIndex = status.value.i
+                    reject(e);
+                    state.done = true
+                    return;
+                }
+                // appease TypeScript, this can't ever be null
+                if (status == null) throw new TypeError("Unexpected null")
+                if (!status.done) {
+                    if (!isTick(status))
+                        throw new TypeError("Unexpected YieldResult " + JSON.stringify(status.value));
+                    runnerOptions.onTick?.({
+                        i: status.value.i - 1,
+                        reps: status.value.reps,
+                        entries: tasks.map(t => t.result)
+                    });
+                }
 
-        } while (!status.done && state.run && !state.done);
-        if (status.done || state.done)
-            fulfill({
+            } while (!status.done && state.run && !state.done);
+            if (status.done || state.done) fulfill({
                 i: status.value.i - 1,
                 reps: status.value.reps,
                 entries: tasks.map(t => t.result)
-            });
+            });            
+        } catch(e) {
+            reject(e);
+            state.done = true
+        }
     }
     Promise.resolve().then(go).catch(reason => reject(reason));
     return result
