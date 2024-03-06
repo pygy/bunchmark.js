@@ -80,9 +80,8 @@ function bake({ tasks, preamble = "", beforeEach = "", afterEach = "", footer })
 	const now_id = `now_${uid()}`
 
 	return `
-let result
-setTimeout(()=>{console.log(result)}, 2**31 - 1)
-;${stringify({ preamble })};
+globalThis.result = void setTimeout(()=>{console.log(result)}, 2**31 - 1);
+${stringify({ preamble })};
 
 const ${result_uid} = []
 const ${now_id} = ${getTime}
