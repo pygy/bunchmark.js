@@ -1,6 +1,6 @@
 {
 	"name": "@bunchmark/web",
-	"version": "1.0.0-pre-7",
+	"version": "1.0.0-pre-8",
 	"license": "ISC",
 	"description": "The bunchmark web-related routines.",
 	"keywords": [
@@ -18,6 +18,6 @@
 	},
 	"homepage": "https://github.com/pygy/bunchmark.js#readme",
     "dependencies": {
-        "@bunchmark/core": "1.0.0-pre-8"
+        "@bunchmark/core": "1.0.0-pre-9"
       }
 }
