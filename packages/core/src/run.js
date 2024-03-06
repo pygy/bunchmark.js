@@ -67,8 +67,6 @@ const delay = (n) => new Promise(f => setTimeout(f, n));
  */
 async function findN(task, calibrationTargetDuration) {
     const { sample, result, result: { workspace, chronological, calibration }, keepChrono } = task;
-    if (typeof sample !== 'function')
-        debugger;
     let N = 1;
     for (;;) {
         const t = await sample(N);
@@ -103,12 +101,11 @@ async function runOne({ sample, N, result, keepChrono }) {
 
     const jitterFactor = 2 ** (1 + Math.random()) / 2;
     const reps = ceil(N * jitterFactor)
-    const t = await sample(reps) / reps;
+    const t = (await sample(reps)) / reps;
     result.workspace.push(t);
     if (keepChrono)
         result.chronological.push(t);
 }
-
 
 /**
  * @param {RunnerOptions} options
@@ -219,8 +216,10 @@ async function run(options) {
             }
             catch (e) {
                 reject(e);
+                return;
             }
-            if (status == null) throw new TypeError("Unexpected null") // TS flow analysis is lacking here
+            // appease TypeScript, this can't ever be null
+            if (status == null) throw new TypeError("Unexpected null")
             if (!status.done) {
                 if (!isTick(status))
                     throw new TypeError("Unexpected YieldResult " + JSON.stringify(status.value));

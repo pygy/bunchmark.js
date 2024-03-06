@@ -1,3 +1,6 @@
+// This can be useful:
+// https://alexharri.com/blog/jsdoc-as-an-alternative-typescript-syntax
+
 export type Sampler = ((N: number)=>Promise<number>)
 
 export type Bakable = {

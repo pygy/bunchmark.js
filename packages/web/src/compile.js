@@ -16,7 +16,6 @@ function compiler({ tasks, preamble = "", beforeEach = "", afterEach = "", html 
 const iframeSandbox = document.createElement("iframe")
 iframeSandbox.sandbox = "allow-scripts"
 
-
 // https://html.spec.whatwg.org/multipage/scripting.html#restrictions-for-contents-of-script-elements
 function sanitizeScript(txt) {
 	return txt.replace(/<(?=!--|script|\/script)/i, "\\x3ce")
@@ -28,16 +27,17 @@ function sanitizeHTML(txt) {
 	sanitizer.innerHTML = txt
 	return sanitizer.innerHTML
 }
-let result_uid
-const iframeFooter = _result_uid => {
-	result_uid = _result_uid;
+const iframeFooter = result_uid => {
+	let origin = JSON.stringify(window.location.origin);
 	return `
 window.addEventListener("message", ({origin, data: {index, N}}) => {
-	if (origin === ${JSON.stringify(window.location.origin)}) {
+	if (origin === ${origin}) {
 		${result_uid}[index](N).then(time => {
-			window.parent.postMessage({name, time, index}, ${JSON.stringify(window.location.origin)})
-		}).catch(({stack, message}) => {
-			window.parent.postMessage({index, stack, message, ${result_uid}: 1}, ${JSON.stringify(window.location.origin)})
+			window.parent.postMessage({name, time, index, R}, ${origin})
+		}).catch((error) => {
+		const t = typeof error
+		  error = (error instanceof Error || t !== 'symbol' && t !== 'object' || error === null) ? error : ""
+			window.parent.postMessage({index, error, ${result_uid}: 1}, ${origin})
 		})
 	}
 })
@@ -58,7 +58,6 @@ ${sanitizeScript(scriptSrc)}
 `
 }
 
-
 function getSamplers(tasks) {
 	return tasks.map((t, index) => N => {
 		return new Promise((fulfill_, reject_) => {
@@ -68,9 +67,11 @@ function getSamplers(tasks) {
 				if (data.index === index) {
 					if ("time" in data) fulfill_(data.time)
 					else {
-						const { message, stack } = data
-						reject_({ name: t.name, message, stack })
+						const { error } = data
+						reject_(Object.assign(error, { taskId: index }));
 					}
+				} else {
+					console.warn("out of time message");
 				}
 			})
 			iframeSandbox.contentWindow.postMessage({ index, N }, "*")
