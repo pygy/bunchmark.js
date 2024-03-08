@@ -77,8 +77,7 @@ async function findN(task, calibrationTargetDuration) {
             result.N = (N * calibrationTargetDuration / t); // Is this needed?
             calibration.push((N * calibrationTargetDuration / t));
             break;
-        }
-        else {
+        } else {
             N *= 2;
         }
     }
@@ -103,8 +102,7 @@ async function runOne({ sample, N, result, keepChrono }) {
     const reps = ceil(N * jitterFactor)
     const t = (await sample(reps)) / reps;
     result.workspace.push(t);
-    if (keepChrono)
-        result.chronological.push(t);
+    if (keepChrono) result.chronological.push(t);
 }
 
 /**
@@ -126,8 +124,7 @@ function* runGenerator(options, state) {
             for (const task of tasks) {
                 yield { kind: "task", task: findN(task, calibrationTargetDuration) };
             }
-        }
-        else {
+        } else {
             if (i === calibrationRuns) {
                 // set the final iteration number for each task
                 // we take the median of the calibration runs.
@@ -137,6 +134,7 @@ function* runGenerator(options, state) {
             }
 
             for (const j in sh) {
+                console.log(Object.keys(sh[k]), sh[k].i)
                 yield { kind: "task", task: runOne(sh[j]), i: sh[j].i };
             }
         }
@@ -182,11 +180,12 @@ async function run(options) {
     const state = { run: true, done: false };
     if (options.handle != null && typeof options.handle === 'object') {
         options.handle.pause = (mode = true) => {
-            if (mode !== state.run)
-                return;
+            if (mode !== state.run) return;
             state.run = !mode;
-            if (state.run)
-                Promise.resolve().then(go).catch(reason => reject(reason));
+            if (state.run && !state.done) Promise.resolve().then(go).catch(reason => {
+                state.done = true
+                reject(reason)
+            });
         };
         options.handle.stop = () => { state.done = true; };    
     }
@@ -199,49 +198,45 @@ async function run(options) {
         reject = r;
     });
     async function go() {
-        try {
-            /**
-             * $typedef IteratorResult<YieldTask | YieldTick, ReturnTick>
-             */
-            let status;
-            do {
-                await delay(0);
-                try {
-                    do {
-                        status = runner.next();
-                        if (!status.done && isTask(status)) await (status.value).task
-                        else break
-                    } while (true);
-                }
-                catch (e) {
-                    if (isTask(status)) e.TaskIndex = status.value.i
-                    reject(e);
-                    state.done = true
-                    return;
-                }
-                // appease TypeScript, this can't ever be null
-                if (status == null) throw new TypeError("Unexpected null")
-                if (!status.done) {
-                    if (!isTick(status))
-                        throw new TypeError("Unexpected YieldResult " + JSON.stringify(status.value));
-                    runnerOptions.onTick?.({
-                        i: status.value.i - 1,
-                        reps: status.value.reps,
-                        entries: tasks.map(t => t.result)
-                    });
-                }
+        /**
+         * $typedef IteratorResult<YieldTask | YieldTick, ReturnTick>
+         */
+        let status;
+        do {
+            await delay(0);
+            try {
+                do {
+                    status = runner.next();
+                    if (!status.done && isTask(status)) await (status.value).task
+                    else break
+                } while (true);
+            }
+            catch (e) {
+                state.done = true
+                reject(e);
+                return;
+            }
+            // appease TypeScript, this can't ever be null
+            if (status == null) throw new TypeError("Unexpected null")
+            if (!status.done) {
+                if (!isTick(status)) throw new TypeError("Unexpected YieldResult " + JSON.stringify(status.value));
+                runnerOptions.onTick?.({
+                    i: status.value.i - 1,
+                    reps: status.value.reps,
+                    entries: tasks.map(t => t.result)
+                });
+            }
 
-            } while (!status.done && state.run && !state.done);
-            if (status.done || state.done) fulfill({
-                i: status.value.i - 1,
-                reps: status.value.reps,
-                entries: tasks.map(t => t.result)
-            });            
-        } catch(e) {
-            reject(e);
-            state.done = true
-        }
+        } while (!status.done && state.run && !state.done);
+        if (status.done || state.done) fulfill({
+            i: status.value.i - 1,
+            reps: status.value.reps,
+            entries: tasks.map(t => t.result)
+        });
     }
-    Promise.resolve().then(go).catch(reason => reject(reason));
+    Promise.resolve().then(go).catch(reason => {
+        state.done = true
+        reject(reason)
+    });
     return result
 }
