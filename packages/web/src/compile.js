@@ -6,10 +6,18 @@ function compiler({ tasks, preamble = "", beforeEach = "", afterEach = "", html 
 	setIframeSrc(html, bake({ tasks, preamble, beforeEach, afterEach, footer: iframeFooter }))
 
 	const samplers = getSamplers(tasks)
-	return new Promise(fulfill => {
-		iframeSandbox.onload = () => {
-			fulfill(samplers)
-		}
+	return new Promise((fulfill, reject) => {
+		window.addEventListener("message", function handler(ev) {
+			const { data } = ev
+			if (data.secret === secret) {
+				window.removeEventListener("message", handler)
+        if(data.success) fulfill(samplers)
+        else {
+          iframeSandbox.srcdoc = ''
+          reject(data.error)
+        }
+			}
+		})
 	})
 }
 
@@ -37,11 +45,11 @@ window.addEventListener("message", ({origin, data: {index, N}}) => {
 	if (origin === ${origin}) {
 		const secret = ${JSON.stringify(secret)}
 		${result_uid}[index](N).then(time => {
-			window.parent.postMessage({name, time, index}, ${origin})
+			window.parent.postMessage({name, time, index, secret}, ${origin})
 		}).catch((error) => {
 		const t = typeof error
 		  error = (error instanceof Error || t !== 'symbol' && t !== 'object' || error === null) ? error : ""
-			window.parent.postMessage({index, error}, ${origin})
+			window.parent.postMessage({index, error, secret}, ${origin})
 		})
 	}
 })
@@ -53,20 +61,51 @@ function setIframeSrc(html, scriptSrc) {
 		document.body.appendChild(iframeSandbox)
 	}
 	const origin = JSON.stringify(window.location.origin);
-
 	iframeSandbox.srcdoc = `
 <!doctype html>
 <meta charset="utf8"><title>Bunchmark sandbox</title>
-<script>window.addEventListener('error', (e) => {
-	const secret = ${JSON.stringify(secret)}
+<body>
+<script>
+{
+document.scripts[0].remove()
+const {
+	document: {documentElement, body: {prepend, remove}, createElement}, 
+	parent, parent: {postMessage}
+} = window
+const {assign} = Object
+const call = atob.call.bind(atob.call)
+
+let threw = false
+const secret = ${JSON.stringify(secret)}
+window.addEventListener('error', (e) => {
+	threw = true
 	e.preventDefault()
 	const {error} = e
-	window.parent.postMessage({loadError: true, error, secret}, ${origin})
+	call(postMessage, parent, {success: false, error, secret}, ${origin})
+}, {once: true})
+
+window.addEventListener('load', ()=>{
+	call(prepend, documentElement, 
+		assign(
+			call(createElement, document, 'script'),
+			{
+				call,
+				remove,
+				onload(){
+					if (!threw) call(postMessage, parent, {success: true, secret}, ${origin})
+				},
+        src: "data:text/javascript;base64," +${JSON.stringify(btoa(
+          "{const s = document.scripts[0];const {call, remove} = s;call(remove, s) };\n"+
+          scriptSrc
+        ))},
+				type: "module",
+			}
+		)
+	)
 })
-${sanitizeHTML(html)}
-<script type=module>
-${sanitizeScript(scriptSrc)}
+}
 </script>
+${sanitizeHTML(html)}
 `
 }
 
