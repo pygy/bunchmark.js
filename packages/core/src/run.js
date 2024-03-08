@@ -134,7 +134,7 @@ function* runGenerator(options, state) {
             }
 
             for (const j in sh) {
-                console.log(Object.keys(sh[k]), sh[k].i)
+                console.log(Object.keys(sh[j]), sh[j].i)
                 yield { kind: "task", task: runOne(sh[j]), i: sh[j].i };
             }
         }
